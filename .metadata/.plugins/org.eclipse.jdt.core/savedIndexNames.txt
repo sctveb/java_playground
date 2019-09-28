@@ -1,0 +1,3 @@
+INDEX VERSION 1.131+C:\Git_playground\java_playground\.metadata\.plugins\org.eclipse.jdt.core
+3658359147.index
+1124561105.index
