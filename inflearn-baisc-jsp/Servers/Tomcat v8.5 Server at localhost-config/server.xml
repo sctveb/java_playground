@@ -60,7 +60,7 @@
          APR (HTTP/AJP) Connector: /docs/apr.html
          Define a non-SSL/TLS HTTP/1.1 Connector on port 8080
     -->
-    <Connector connectionTimeout="20000" port="8090" protocol="HTTP/1.1" redirectPort="8443"/>
+    <Connector URIEncoding="UTF-8" connectionTimeout="20000" port="8090" protocol="HTTP/1.1" redirectPort="8443"/>
     <!-- A "Connector" using the shared thread pool-->
     <!--
     <Connector executor="tomcatThreadPool"
@@ -149,7 +149,7 @@
              Note: The pattern used is equivalent to using pattern="common" -->
         <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs" pattern="%h %l %u %t &quot;%r&quot; %s %b" prefix="localhost_access_log" suffix=".txt"/>
 
-      <Context docBase="test-01" path="/test-01" reloadable="true" source="org.eclipse.jst.jee.server:test-01"/><Context docBase="ConfigProject" path="/ConfigProject" reloadable="true" source="org.eclipse.jst.jee.server:ConfigProject"/><Context docBase="ServletData" path="/ServletData" reloadable="true" source="org.eclipse.jst.jee.server:ServletData"/><Context docBase="Cookie" path="/Cookie" reloadable="true" source="org.eclipse.jst.jee.server:Cookie"/><Context docBase="SessionTest" path="/SessionTest" reloadable="true" source="org.eclipse.jst.jee.server:SessionTest"/></Host>
+      <Context docBase="test-01" path="/test-01" reloadable="true" source="org.eclipse.jst.jee.server:test-01"/><Context docBase="ConfigProject" path="/ConfigProject" reloadable="true" source="org.eclipse.jst.jee.server:ConfigProject"/><Context docBase="ServletData" path="/ServletData" reloadable="true" source="org.eclipse.jst.jee.server:ServletData"/><Context docBase="Cookie" path="/Cookie" reloadable="true" source="org.eclipse.jst.jee.server:Cookie"/><Context docBase="SessionTest" path="/SessionTest" reloadable="true" source="org.eclipse.jst.jee.server:SessionTest"/><Context docBase="encodingTest" path="/encodingTest" reloadable="true" source="org.eclipse.jst.jee.server:encodingTest"/></Host>
     </Engine>
   </Service>
 </Server>
