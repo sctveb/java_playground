@@ -116,16 +116,13 @@ response.sendRedirect("loginOk.jsp");
 
 세션 : 쿠키를 통해 사용자를 식별하기 위해 서버에 저장하는 정보
 
+```java
+HttpSession session = request.getSession();
+session.setAttribute("memberId", mID);
+
+response.sendRedirect("loginOk.jsp");
+```
 
 
-한글처리
 
-오라클 설치
 
-SQL
-
-JDBC
-
-DAO와 DTO
-
-Connection Pool

@@ -18,8 +18,8 @@ Oracle Database Express Edition 11g Release 2
 sqlplus
 system
 password
-create user username identified by password;
-grant connect, resource to username;
+create user c##username identified by password;
+grant connect, resource to c##username;
 show user;
 ```
 
@@ -115,16 +115,54 @@ SELECT * FROM book ORDER BY book_id DESC;
 
 ### JDBC
 
-JDBC 설정
+JDBC : Java가 DB와 통신할 수 있게 해주는 API
+
+1. oracle jdbc 파일 찾기 - ojdbc8_g.jar
+2. jre/lib/ext 폴더에 추가
+
+
 
 JDBC를 이용한 데이터 관리
 
-PreparedStatement
+```java
+// OracleDriver 로딩
+Class.forName(driver);
+// Java와 Oracle 연결
+con = DriverManager.getConnection(url, id, pw);
+// query 객체 전송
+stmt = con.createStatement();
+// query 작성
+String sql = "SELECT * FROM book"
+// 탐색 query 전송
+res = stmt.executeQuery(sql);
+// 수정 query 전송
+// res = stmt.executeUpdate(sql);
+```
+
+PreparedStatement : query 작성간에 빈칸채우기 형식으로 작동할 수 있도록 도와줌
+
+```java
+String sql = "UPDATE book SET book_loc = ? WHERE book_name = ?";
+pstmt = con.prepareStatement(sql);
+pstmt.setString(1, "001-0001732");
+pstmt.setString(2, "book7");
+int n = pstmt.executeUpdate();
+```
 
 
 
 ### DAO와 DTO
 
+DAO : Data Access Object, Java의 데이터를 DB의 것으로 바꾸는 객체
+
+DTO : Data Transfer Object, DB의 데이터를 Java의 것으로 바꾸는 객체
+
+ex) 브라우저 - BookServlet - BookDAO - DTO - DB
+
 
 
 ### Connection Pool
+
+커넥션 풀 :
+
+커넥션 풀 설정 :
