@@ -163,6 +163,44 @@ ex) 브라우저 - BookServlet - BookDAO - DTO - DB
 
 ### Connection Pool
 
-커넥션 풀 :
+커넥션 풀 :  잦은 커넥션에 대한 명령을 풀로 만들어 관리
 
 커넥션 풀 설정 :
+
+1. web.xml에 정의
+
+```xml
+<Resource 
+          auth="Container"
+          driverClassName="oracle.jdbc.driver.OracleDriver"
+          url="jdbc:oracle:thin:@localhost:1521:xe"
+          username="c##scott"
+          password="tiger"
+          name="jdbc/Oracle18g"
+          type="javax.sql.DataSource"
+          maxActive="4"
+          maxWait="10000"
+          />
+```
+
+2. 정의한 내용을 이용해 기존 코드 교체
+
+```java
+/*
+String Driver = "oracle.jdbc.driver.OracleDriver";
+String url = "jdbc:oracle:thin:@localhost:1521:xe";
+String id = "c##scott";
+String pw = "tiger";
+*/
+// Class.forName(driver) 
+Context context = new InitialContext();
+dataSource = (DataSource)context.lookup("java:comp/env/jdbc/Oracle11g");
+```
+
+```java
+// con = DriverManager.getConnection();
+con = DataSource.getConnection();
+```
+
+
+
