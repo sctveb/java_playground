@@ -238,17 +238,23 @@ View 객체
 
 ### 스프링 MVC 웹서비스
 
-웹 서버(Tomcat) 다운로드
+웹 서버(Tomcat) 다운로드 및 이클립스 연동 : JSP 강좌와 중복
 
-웹 서버(Tomcat) 와 이클립스 연동
+STS(Spring Tool Suit) 설치 : help - eclipse marketplace - sts 검색 및 설치
 
-STS(Spring Tool Suit) 설치
+STS를 이용한 웹 프로젝트 생성 :
 
-STS를 이용한 웹 프로젝트 생성
+1. New -> Other 선택
+2. Spring Legacy Project -> Spring MVC Project
 
-스프링 MVC 프레임워크를 이용한 웹 프로젝트 분석
+프로젝트 전체 구조 :
 
-프로젝트 전체 구조
+1. java파일 : 어플리케이션에서 사용하는 Controller, Service, DAO 객체 등
+2. webapp : 웹과 관련된 파일들(스프링 설정파일, JSP, HTML 등)
+3. resources : JSP 파일을 제외한 html, css, js
+4. spring 폴더 : 스프링 컨테이너 생성을 위한 스프링 설정파일
+5. views 폴더 : View로 사용될 JSP 파일
+6. pom.xml : 메인 레파지토리에서 프로젝트에 필요한 라이브러리를 내려받기 위한 메이븐 설정 파일
 
 web.xml
 
