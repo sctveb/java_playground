@@ -245,7 +245,7 @@ STS(Spring Tool Suit) 설치 : help - eclipse marketplace - sts 검색 및 설�
 STS를 이용한 웹 프로젝트 생성 :
 
 1. New -> Other 선택
-2. Spring Legacy Project -> Spring MVC Project
+2. Spring Legacy Project -> Spring MVC Project (STS 3 version)
 
 프로젝트 전체 구조 :
 
@@ -256,25 +256,213 @@ STS를 이용한 웹 프로젝트 생성 :
 5. views 폴더 : View로 사용될 JSP 파일
 6. pom.xml : 메인 레파지토리에서 프로젝트에 필요한 라이브러리를 내려받기 위한 메이븐 설정 파일
 
-web.xml
+web.xml : DispatcherServlet을 등록하고 서블릿 맵핑을 '/'
 
-DispatchServlet
+DispatchServlet : request, handlerMapping, handlerAdapter, viewResolver를 연결해주는 객체 
 
-servlet-context.xml
+servlet-context.xml : 스프링 설정의 역할을 하는 파일
 
-Controller
+Controller : 사용자의 요청을 실제로 처리하는 객체들 (Service - DAO 순으로 연결됨)
 
-View
+View : 클라이언트 요청 정보(url맵핑값)에 해당하는 jsp파일 실행
 
 
 
 ### STS를 이용하지 않은 웹 프로젝트
 
+스프링 프로젝트 구조 이해를 위한 강좌임으로 필요로 하는 파일구조로 대체
+
+```
+project root folder
+|- src
+	|-- main
+		|--- java
+			|---- basePackage folder
+				|----- controllers*.java
+		|--- webapp
+			|---- WEB-INF
+				|----- spring
+					|------ appServlet
+						|------- servlet-context.xml
+					|------ root-context.xml
+				|----- views
+					|------ views*.jsp
+				|----- web.xml	
+|- pom.xml
+```
+
 
 
 ### Service & Dao 객체 구현
+
+한글 처리 : web.xml에 추가
+
+```xml
+<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceEncoding</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+```
+
+
+
+서비스 객체, DAO 객체 구현 : 
+
+1. new 연산자를 이용한 service 객체 생성 및 참조
+```java
+MemberService service = new MemberService();
+```
+2. 스프링 설정파일을 이용한 service 객체 생성 및 의존 객체 자동 주입
+```xml
+<beans:bean id="service" class="com.bs.lec17.member.service.MemberService"></beans:bean>
+```
+```java
+@Autowired
+MemberService service;
+```
+3. 어노테이션을 이용해 service 객체 생성 및 의존 객체 자동 주입
+```java
+/// Service Class
+@Service
+// @Component
+// @Repository
+public class MemberService implements IMemberService {
+    // ...
+}
+
+/// DAO Class
+//@Component
+@Repository
+public class MemberDao implements IMemberDao {
+    // ...
+}
+
+/// Controller Class
+@Controller
+public class MemberController {
+    @Autowired
+    MemberService service;
+
+    @Autowired
+    MemberDao dao;
+}
+```
 
 
 
 ### Controller 객체 구현
 
+@RequestMapping을 이용한 URL맵핑 : 
+
+```java
+// GET 방식의 경우 @RequestMapping("/memJoin") 으로 작성해도 무방
+@RequestMapping(value="/memJoin", method=RequestMethod.POST)
+public String memJoin(Model model, HttpServletRequest request){
+    
+}
+```
+
+
+
+요청 파라미터
+
+1. HttpServlet Request 객체를 이용한 HTTP 전송 정보 얻기
+```java
+public String memLogin(Model model, HttpServletRequest request) {
+    	String memId = request.getParameter("memId");
+		String memPw = request.getParameter("memPw");
+     // ...
+}
+```
+2. @RequestParam 어노테이션을 이용한 HTTP 전송 정보 얻기
+```java
+public String memLogin(Model model, @RequestParam("memId") String memId, @RequestParam(value="memPw", required=false, defaultValue="1234") String memPw) {
+ // ...   
+}
+
+```
+3. 커맨드 객체를 이용한 HTTP 전송 정보 얻기(jsp에서 parameter, object로 사용하는 차이점 유의)
+```java
+/// before
+@RequestMapping(value="/memJoin", method=RequestMethod.POST)
+public String memJoin(Model model, HttpServletRequest request) {
+		String memId = request.getParameter("memId");
+		String memPw = request.getParameter("memPw");
+		String memMail = request.getParameter("memMail");
+		String memPhone1 = request.getParameter("memPhone1");
+		String memPhone2 = request.getParameter("memPhone2");
+		String memPhone3 = request.getParameter("memPhone3");
+		
+		service.memberRegister(memId, memPw, memMail, memPhone1, memPhone2, memPhone3);		
+		
+		model.addAttribute("memId", memId);
+		model.addAttribute("memPw", memPw);
+		model.addAttribute("memMail", memMail);
+		model.addAttribute("memPhone", memPhone1 + " - " + memPhone2 + " - " + memPhone3);
+		
+	return "memJoinOk";
+}
+
+
+/// after
+@RequestMapping(value="/memJoin", method=RequestMethod.POST)
+public String memJoin(Member member) {
+		service.memberRegister(member.getMemId(),member.getMemPw(),member.getMemMail(), member.getMemPhone1(), member.getMemPhone2(), member.getMemPhone3())		
+
+		
+	return "memJoinOk";
+}
+```
+
+
+
+@ModelAttribute : 
+
+1. 커맨드 객체의 이름을 변경할 수 있고, 변경된 이름은 뷰에서 커맨드 객체를 사용할 참조할 때 사용됨
+
+| 컨트롤러                                                     | 뷰              |
+| ------------------------------------------------------------ | --------------- |
+| public String memJoin(Member member)                         | ${member.memId} |
+| public String memRemove(@ModelAttribute("mem") Member member) | ${mem.memId}    |
+
+2. @ModelAttribute가 적용된 메서드는 호출하지 않아도 같이 호출됨
+
+
+
+커맨드 객체 프로퍼티 데이터 타입 : 
+
+1. 기본 데이터 타입의 경우: 일반적인 형태 (ex) `private String memName;`) 
+2. 중첩 커맨드 객체를 이용한 List 구조의 경우: 중첩된 객체를 사용해야할 때  (ex) `private List<MemPhone> memPhones;`) 
+
+
+
+Model & ModelAndView : 컨트롤러에서 뷰에 데이터를 전달하기 위해 사용되는 객체
+
+1. Model : 뷰에 데이터만을 전달하기 위한 객체
+```java
+model.addAttribute("memBef", members[0]);
+model.addAttribute("memAft", members[1]);
+
+return "memModifyOk";
+```
+2. ModelAndView 데이터와 뷰의 이름을 함께 전달하는 객체
+```java
+ModelAndView mav = new ModelAndView();
+mav.addObject("memBef", members[0]);
+mav.addObject("memAft", members[1]);
+mav.setViewName("memModifyOk");
+
+return mav;
+```
